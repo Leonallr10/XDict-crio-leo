@@ -12,13 +12,15 @@ function App() {
   // State for search term and result
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResult, setSearchResult] = useState('');
+  const [hasSearched, setHasSearched] = useState(false);
 
   // Handle search functionality
   const handleSearch = useCallback(() => {
     const trimmedTerm = searchTerm.trim();
+    setHasSearched(true);
 
     if (!trimmedTerm) {
-      setSearchResult('');
+      setSearchResult('Word not found in the dictionary.');
       return;
     }
 
@@ -64,18 +66,12 @@ function App() {
         </button>
       </div>
 
-      {searchResult && (
-        <div className="result-container">
-          {searchResult === 'Word not found in the dictionary.' ? (
-            <p>{searchResult}</p>
-          ) : (
-            <>
-              <h3>Definition:</h3>
-              <p>{searchResult}</p>
-            </>
-          )}
-        </div>
-      )}
+      <div className="result-container">
+        <h3>Definition:</h3>
+        {hasSearched && searchResult && (
+          <p>{searchResult}</p>
+        )}
+      </div>
     </div>
   )
 }
