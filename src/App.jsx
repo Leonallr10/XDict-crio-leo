@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import './App.css'
 
 function App() {
@@ -14,15 +14,17 @@ function App() {
   const [searchResult, setSearchResult] = useState('');
 
   // Handle search functionality
-  const handleSearch = () => {
-    if (!searchTerm.trim()) {
+  const handleSearch = useCallback(() => {
+    const trimmedTerm = searchTerm.trim();
+
+    if (!trimmedTerm) {
       setSearchResult('');
       return;
     }
 
     // Case-insensitive search
     const foundWord = dictionary.find(
-      item => item.word.toLowerCase() === searchTerm.toLowerCase()
+      item => item.word.toLowerCase() === trimmedTerm.toLowerCase()
     );
 
     if (foundWord) {
@@ -30,14 +32,19 @@ function App() {
     } else {
       setSearchResult('Word not found in the dictionary.');
     }
-  };
+  }, [searchTerm, dictionary]);
 
   // Handle Enter key press in input field
-  const handleKeyDown = (e) => {
+  const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
-  };
+  }, [handleSearch]);
+
+  // Handle input change
+  const handleInputChange = useCallback((e) => {
+    setSearchTerm(e.target.value);
+  }, []);
 
   return (
     <div className="app">
@@ -47,7 +54,7 @@ function App() {
         <input
           type="text"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Search for a word..."
           className="search-input"
